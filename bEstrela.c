@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include "bEstrela.h"
 
-struct BTreeNode* createTree() {
-    struct BTreeNode* root = createNode();
+struct BTreeNode* arvB_cria() {
+    struct BTreeNode* root = arvB_criaNo();
     return root;
 }
 
-struct BTreeNode* createNode() {
+struct BTreeNode* arvB_criaNo() {
     struct BTreeNode* newNode = (struct BTreeNode*)malloc(sizeof(struct BTreeNode));
     newNode->num_keys = 0;
     newNode->is_leaf = 1;
@@ -17,16 +17,16 @@ struct BTreeNode* createNode() {
     return newNode;
 }
 
-void destroyTree(struct BTreeNode* root) {
+void arvB_destroi(struct BTreeNode* root) {
     if (root != NULL) {
         for (int i = 0; i <= root->num_keys; i++) {
-            destroyTree(root->children[i]);
+            arvB_destroi(root->children[i]);
         }
         free(root);
     }
 }
 
-void mergeNodes(struct BTreeNode* parent, int index) {
+void arvB_mergeNo(struct BTreeNode* parent, int index) {
     struct BTreeNode* leftChild = parent->children[index];
     struct BTreeNode* rightChild = parent->children[index + 1];
     
@@ -53,8 +53,8 @@ void mergeNodes(struct BTreeNode* parent, int index) {
     free(rightChild);
 }
 
-void splitNode(struct BTreeNode* parent, int index) {
-    struct BTreeNode* newNode = createNode();
+void arvB_splitNo(struct BTreeNode* parent, int index) {
+    struct BTreeNode* newNode = arvB_criaNo();
     struct BTreeNode* oldNode = parent->children[index];
     newNode->is_leaf = oldNode->is_leaf;
     newNode->num_keys = MAX_KEYS / 2;
@@ -86,7 +86,7 @@ void splitNode(struct BTreeNode* parent, int index) {
     parent->num_keys++;
 }
 
-void balanceNode(struct BTreeNode* parent, int index){
+void arvB_balanceNo(struct BTreeNode* parent, int index){
     if (parent == NULL) {
         return;
     }
@@ -94,7 +94,7 @@ void balanceNode(struct BTreeNode* parent, int index){
     struct BTreeNode* child = parent->children[index];
 
     if (child->num_keys > MAX_KEYS) {
-        splitNode(parent, index);
+        arvB_splitNo(parent, index);
     } else if (child->num_keys < MIN_KEYS) {
         int leftIndex = index - 1;
         int rightIndex = index + 1;
@@ -119,80 +119,17 @@ void balanceNode(struct BTreeNode* parent, int index){
             parent->children[rightIndex]->num_keys--;
         } else if (leftIndex >= 0) {
             // Fusão com o filho à esquerda
-            mergeNodes(parent, leftIndex);
+            arvB_mergeNo(parent, leftIndex);
         } else {
             // Fusão com o filho à direita
-            mergeNodes(parent, index);
+            arvB_mergeNo(parent, index);
         }
     }
 }
 
-void removeKey(struct BTreeNode* node, int index) {
-    for (int i = index; i < node->num_keys - 1; i++) {
-        node->keys[i] = node->keys[i + 1];
-    }
-    node->num_keys--;
-    printf("Chave %d removida com sucesso!", index);
-}
-
-void removeNode(struct BTreeNode** root, int key) {
+void arvB_insere(struct BTreeNode** root, int key) {
     if (*root == NULL) {
-        return;
-    }
-
-    struct BTreeNode* currentNode = *root;
-    struct BTreeNode* parent = NULL;
-    int index;
-
-    while (!currentNode->is_leaf) {
-        parent = currentNode;
-        for (index = 0; index < currentNode->num_keys; index++) {
-            if (key < currentNode->keys[index]) {
-                break;
-            }
-        }
-        currentNode = currentNode->children[index];
-    }
-
-    for (index = 0; index < currentNode->num_keys; index++) {
-        if (key == currentNode->keys[index]) {
-            break;
-        }
-    }
-
-    if (index < currentNode->num_keys && currentNode->keys[index] == key) {
-        if (currentNode->is_leaf) {
-            removeKey(currentNode, index);
-        } else {
-            // Substitua o nó a ser removido pelo maior valor do nó à esquerda ou pelo menor valor do nó à direita.
-            struct BTreeNode* pred = currentNode->children[index];
-            while (!pred->is_leaf) {
-                pred = pred->children[pred->num_keys];
-            }
-            currentNode->keys[index] = pred->keys[pred->num_keys - 1];
-            removeNode(&(currentNode->children[index]), pred->keys[pred->num_keys - 1]);
-        }
-    } else {
-        if (!currentNode->is_leaf) {
-            removeNode(&(currentNode->children[index]), key);
-        }
-    }
-    
-    // Balanceamento após a remoção
-    balanceNode(parent, index);
-
-    // Se a &raiz ficou vazia, atualize-a
-    if (parent == NULL && (*root)->num_keys == 0) {
-        struct BTreeNode* newRoot = (*root)->children[0];
-        free(*root);
-        *root = newRoot;
-    }
-    printf("No %d removido com sucesso!", key);
-}
-
-void insert(struct BTreeNode** root, int key) {
-    if (*root == NULL) {
-        struct BTreeNode* newNode = createNode();
+        struct BTreeNode* newNode = arvB_criaNo();
         newNode->keys[0] = key;
         newNode->num_keys = 1;
         *root = newNode;
@@ -226,28 +163,91 @@ void insert(struct BTreeNode** root, int key) {
         currentNode->keys[index] = key;
         currentNode->num_keys++;
     } else {
-        splitNode(parent, index);
+        arvB_splitNo(parent, index);
         if (key >= parent->keys[index]) {
             index++;
         }
-        insert(&(parent->children[index]), key);
+        arvB_insere(&(parent->children[index]), key);
     }
     
-    balanceNode(parent, index);
+    arvB_balanceNo(parent, index);
 }
 
-void inorderTraversal(struct BTreeNode* root) {
+void arvB_removeChave(struct BTreeNode* node, int index) {
+    for (int i = index; i < node->num_keys - 1; i++) {
+        node->keys[i] = node->keys[i + 1];
+    }
+    node->num_keys--;
+    printf("Chave %d removida com sucesso!", index);
+}
+
+void arvB_removeNo(struct BTreeNode** root, int key) {
+    if (*root == NULL) {
+        return;
+    }
+
+    struct BTreeNode* currentNode = *root;
+    struct BTreeNode* parent = NULL;
+    int index;
+
+    while (!currentNode->is_leaf) {
+        parent = currentNode;
+        for (index = 0; index < currentNode->num_keys; index++) {
+            if (key < currentNode->keys[index]) {
+                break;
+            }
+        }
+        currentNode = currentNode->children[index];
+    }
+
+    for (index = 0; index < currentNode->num_keys; index++) {
+        if (key == currentNode->keys[index]) {
+            break;
+        }
+    }
+
+    if (index < currentNode->num_keys && currentNode->keys[index] == key) {
+        if (currentNode->is_leaf) {
+            arvB_removeChave(currentNode, index);
+        } else {
+            // Substitua o nó a ser removido pelo maior valor do nó à esquerda ou pelo menor valor do nó à direita.
+            struct BTreeNode* pred = currentNode->children[index];
+            while (!pred->is_leaf) {
+                pred = pred->children[pred->num_keys];
+            }
+            currentNode->keys[index] = pred->keys[pred->num_keys - 1];
+            arvB_removeNo(&(currentNode->children[index]), pred->keys[pred->num_keys - 1]);
+        }
+    } else {
+        if (!currentNode->is_leaf) {
+            arvB_removeNo(&(currentNode->children[index]), key);
+        }
+    }
+    
+    // Balanceamento após a remoção
+    arvB_balanceNo(parent, index);
+
+    // Se a &raiz ficou vazia, atualize-a
+    if (parent == NULL && (*root)->num_keys == 0) {
+        struct BTreeNode* newRoot = (*root)->children[0];
+        free(*root);
+        *root = newRoot;
+    }
+    printf("No %d removido com sucesso!", key);
+}
+
+void arvB_imprime(struct BTreeNode* root) {
     if (root != NULL) {
         int i;
         for (i = 0; i < root->num_keys; i++) {
-            inorderTraversal(root->children[i]);
+            arvB_imprime(root->children[i]);
             printf("%d ", root->keys[i]);
         }
-        inorderTraversal(root->children[i]);
+        arvB_imprime(root->children[i]);
     }
 }
 
-struct BTreeNode* search(struct BTreeNode* root, int key) {
+struct BTreeNode* arvB_busca(struct BTreeNode* root, int key) {
     if (root == NULL) {
         return NULL;
     }
@@ -265,30 +265,30 @@ struct BTreeNode* search(struct BTreeNode* root, int key) {
         return NULL;
     }
 
-    return search(root->children[index], key);
+    return arvB_busca(root->children[index], key);
 }
 
-int countNodes(struct BTreeNode* root) {
+int arvB_qnt_nos(struct BTreeNode* root) {
     if (root == NULL) {
         return 0;
     }
 
     int count = 1;
     for (int i = 0; i <= root->num_keys; i++) {
-        count += countNodes(root->children[i]);
+        count += arvB_qnt_nos(root->children[i]);
     }
     printf("%d ", count);
     return 0;
 }
 
-int countKeys(struct BTreeNode* root) {
+int arvB_qnt_chaves(struct BTreeNode* root) {
     if (root == NULL) {
         return 0;
     }
 
     int count = root->num_keys;
     for (int i = 0; i <= root->num_keys; i++) {
-        count += countKeys(root->children[i]);
+        count += arvB_qnt_chaves(root->children[i]);
     }
     printf("%d ", count);
     return 0;

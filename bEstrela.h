@@ -11,18 +11,17 @@ struct BTreeNode {
     int is_leaf;
 };
 
-struct BTreeNode* createTree();
-struct BTreeNode* createNode();
-void splitNode(struct BTreeNode* parent, int index);
-void balanceNode(struct BTreeNode* parent, int index);
-void insert(struct BTreeNode** root, int key);
-void removeKey(struct BTreeNode* node, int index);
-void removeNode(struct BTreeNode** root, int key);
-struct BTreeNode* search(struct BTreeNode* root, int key);
-int countNodes(struct BTreeNode* root);
-int countKeys(struct BTreeNode* root);
-void destroyTree(struct BTreeNode* root);
-void inorderTraversal(struct BTreeNode* root);
-
+struct BTreeNode* arvB_cria();
+struct BTreeNode* arvB_criaNo();
+void arvB_destroi(struct BTreeNode* root);
+void arvB_splitNo(struct BTreeNode* parent, int index);
+void arvB_balanceNo(struct BTreeNode* parent, int index);
+void arvB_insere(struct BTreeNode** root, int key);
+void arvB_removeChave(struct BTreeNode* node, int index);
+void arvB_removeNo(struct BTreeNode** root, int key);
+void arvB_imprime(struct BTreeNode* root);
+struct BTreeNode* arvB_busca(struct BTreeNode* root, int key);
+int arvB_qnt_nos(struct BTreeNode* root);
+int arvB_qnt_chaves(struct BTreeNode* root);
 
 #endif
