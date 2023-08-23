@@ -23,6 +23,6 @@ int countNodes(struct BTreeNode* root);
 int countKeys(struct BTreeNode* root);
 void destroyTree(struct BTreeNode* root);
 void inorderTraversal(struct BTreeNode* root);
-void printTree(struct BTreeNode* root);
+
 
 #endif

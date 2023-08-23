@@ -53,14 +53,6 @@ void mergeNodes(struct BTreeNode* parent, int index) {
     free(rightChild);
 }
 
-void removeKey(struct BTreeNode* node, int index) {
-    for (int i = index; i < node->num_keys - 1; i++) {
-        node->keys[i] = node->keys[i + 1];
-    }
-    node->num_keys--;
-    printf("Chave %d removida com sucesso!", index);
-}
-
 void splitNode(struct BTreeNode* parent, int index) {
     struct BTreeNode* newNode = createNode();
     struct BTreeNode* oldNode = parent->children[index];
@@ -133,6 +125,14 @@ void balanceNode(struct BTreeNode* parent, int index){
             mergeNodes(parent, index);
         }
     }
+}
+
+void removeKey(struct BTreeNode* node, int index) {
+    for (int i = index; i < node->num_keys - 1; i++) {
+        node->keys[i] = node->keys[i + 1];
+    }
+    node->num_keys--;
+    printf("Chave %d removida com sucesso!", index);
 }
 
 void removeNode(struct BTreeNode** root, int key) {
@@ -293,17 +293,3 @@ int countKeys(struct BTreeNode* root) {
     printf("%d ", count);
     return 0;
 }
-
-void printTree(struct BTreeNode* root) {
-    if (root != NULL) {
-        int i;
-        for (i = 0; i < root->num_keys; i++) {
-            printTree(root->children[i]);
-            printf("%d ", root->keys[i]);
-        }
-        printTree(root->children[i]);
-    }
-}
-
-
-
