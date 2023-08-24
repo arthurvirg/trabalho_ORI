@@ -1,8 +1,8 @@
 #ifndef B_TREE_H
 #define B_TREE_H
 
-#define MAX_CHAVES 8
-#define MIN_CHAVES ((MAX_CHAVES - 1) / 2)
+#define MAX_CHAVES 6    
+#define MIN_CHAVES ((2 * MAX_CHAVES - 1) / 3)
 
 typedef struct NO {
     int chaves[MAX_CHAVES - 1];
@@ -18,7 +18,7 @@ NoArvB* arvB_cria_no();
 void arvB_destroiNO(NoArvB* no);
 void arvB_destroi(ArvB* raiz);
 void arvB_mergeNo(NoArvB* no_pai, int posicao);
-void arvB_splitNo(ArvB no_pai, int posicao);
+void arvB_splitNo(NoArvB* no_pai, int posicao);
 void arvB_balanceNo(NoArvB* no_pai, int posicao);
 int arvB_insere_nao_cheio(NoArvB* no, int valor);
 int arvB_insere(ArvB* raiz, int valor);

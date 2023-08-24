@@ -4,39 +4,44 @@
 #include <stdbool.h>
 
 int main() {
-    ArvB* root = arvB_cria();
-        int keys[] = {50, 20, 10, 30, 5, 15, 25, 60, 70, 80, 90, 95, 100, 200};
-            int num_keys = sizeof(keys) / sizeof(keys[0]);
 
-            for (int i = 0; i < num_keys; i++) {
-                arvB_insere(root, keys[i]);
-            }
+    int vetor[50];
+    for(int i = 0; i < 50; i++)
+    {
+        vetor[i] = rand() %100 ;
+    }
 
-    arvB_imprime(root);
+    ArvB* minha_arvore = arvB_cria();
+    
+    for (int j = 1; j <= 14; j++) {
+        arvB_insere(minha_arvore, vetor[j]);
+    }
+
+    arvB_imprime(minha_arvore);
     printf("\n");
 
-    bool result = arvB_busca(root, 30);
+    bool result = arvB_busca(minha_arvore, 30);
     if (result){
         printf("Chave encontrada!\n");
     }
     else{
-        printf("Chave não encontrada!\n");
+        printf("Chave nao encontrada!\n");
     }
 
-    arvB_remove(root, 50);
+   // arvB_remove(minha_arvore, 50);
 
-    arvB_imprime(root);
+    arvB_imprime(minha_arvore);
     printf("\n");
 
-    int qtd_nos = arvB_qtd_nos(root);
+    int qtd_nos = arvB_qtd_nos(minha_arvore);
     printf("%d\n", qtd_nos);
 
-    int qtd_chaves = arvB_qtd_chaves(root);
+    int qtd_chaves = arvB_qtd_chaves(minha_arvore);
     printf("%d\n", qtd_chaves);
 
-    arvB_destroi(root);
+    arvB_destroi(minha_arvore);
 
-    //arvB_imprime(root);
+    //arvB_imprime(minha_arvore);
     printf("\n");
    
 return 0;
