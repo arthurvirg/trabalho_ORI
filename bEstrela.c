@@ -387,7 +387,7 @@ int arvB_qtd_chaves_recursivo(NoArvB* no) {
     for (int i = 0; i <= no->num_chaves; i++) {
         cont = cont + arvB_qtd_chaves_recursivo(no->filho[i]);            
     }
-    
+
     return cont;
 }
 

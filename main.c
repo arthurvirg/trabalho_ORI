@@ -6,14 +6,14 @@
 int main() {
 
     int vetor[50];
-    for(int i = 0; i < 50; i++)
+    for(int i = 1; i <= 50; i++)
     {
         vetor[i] = rand() %100 ;
     }
 
     ArvB* minha_arvore = arvB_cria();
     
-    for (int j = 1; j <= 14; j++) {
+    for (int j = 1; j <= 50; j++) {
         arvB_insere(minha_arvore, vetor[j]);
     }
 
@@ -28,7 +28,7 @@ int main() {
         printf("Chave nao encontrada!\n");
     }
 
-   // arvB_remove(minha_arvore, 50);
+    //arvB_remove(minha_arvore, 50);
 
     arvB_imprime(minha_arvore);
     printf("\n");
