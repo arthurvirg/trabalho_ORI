@@ -253,7 +253,6 @@ void arvB_removeChave(NoArvB* no, int posicao) {
         no->chaves[i] = no->chaves[i + 1];
     }
     no->num_chaves--;
-    printf("No %d removido com sucesso!\n", no->chaves);
 }
 
 void arvB_remove(ArvB* raiz, int chave) {
@@ -283,6 +282,7 @@ void arvB_remove(ArvB* raiz, int chave) {
 
     if (posicao < no_atual->num_chaves && no_atual->chaves[posicao] == chave) {
         if (no_atual->folha) {
+            printf("Chave %d removida com sucesso!\n", chave);
             arvB_removeChave(no_atual, posicao);
         } else {
             // Substitua o nó a ser removido pelo maior valor do nó à esquerda ou pelo menor valor do nó à direita.

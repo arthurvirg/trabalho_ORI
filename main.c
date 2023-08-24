@@ -22,27 +22,30 @@ int main() {
 
     bool result = arvB_busca(minha_arvore, 30);
     if (result){
-        printf("Chave encontrada!\n");
+        printf("Valor 30 encontrado!\n");
     }
     else{
-        printf("Chave nao encontrada!\n");
+        printf("Valor 30 nao encontrado!\n");
     }
+    
+    int qtd_nos1 = arvB_qtd_nos(minha_arvore);
+    printf("Qtd de nos: %d\n", qtd_nos1);
 
-    //arvB_remove(minha_arvore, 50);
+    int qtd_chaves1 = arvB_qtd_chaves(minha_arvore);
+    printf("Qtd de chaves: %d\n", qtd_chaves1);
+
+    arvB_remove(minha_arvore, 99);
 
     arvB_imprime(minha_arvore);
     printf("\n");
 
-    int qtd_nos = arvB_qtd_nos(minha_arvore);
-    printf("%d\n", qtd_nos);
+    int qtd_nos2 = arvB_qtd_nos(minha_arvore);
+    printf("Qtd de nos: %d\n", qtd_nos2);
 
-    int qtd_chaves = arvB_qtd_chaves(minha_arvore);
-    printf("%d\n", qtd_chaves);
+    int qtd_chaves2 = arvB_qtd_chaves(minha_arvore);
+    printf("Qtd de chaves: %d\n", qtd_chaves2);
 
     arvB_destroi(minha_arvore);
-
-    //arvB_imprime(minha_arvore);
-    printf("\n");
    
 return 0;
 }
