@@ -4,42 +4,40 @@
 #include <stdbool.h>
 
 int main() {
-    struct BTreeNode* root = arvB_cria();
-        int keys[] = {50, 20, 70, 10, 30, 5, 15, 25, 60, 80};
+    ArvB* root = arvB_cria();
+        int keys[] = {50, 20, 10, 30, 5, 15, 25, 60, 70, 80, 90, 95, 100, 200};
             int num_keys = sizeof(keys) / sizeof(keys[0]);
 
             for (int i = 0; i < num_keys; i++) {
-                arvB_insere(&root, keys[i]);
+                arvB_insere(root, keys[i]);
             }
-    
-    arvB_imprime(root);
-    printf("\n");
-
-    arvB_removeChave(root, 3);
-    printf("\n");
 
     arvB_imprime(root);
-    printf("\n");
-
-    arvB_removeNo(&root, 80);
-    printf("\n");
-
-    arvB_imprime(root);
-    printf("\n");
-
-    arvB_qnt_nos(root);
-    printf("\n");
-
-    arvB_qnt_chaves(root);
     printf("\n");
 
     bool result = arvB_busca(root, 30);
     if (result){
-        printf("Chave encontrada!");
+        printf("Chave encontrada!\n");
     }
     else{
-        printf("Chave não encontrada!");
+        printf("Chave não encontrada!\n");
     }
 
+    arvB_remove(root, 50);
+
+    arvB_imprime(root);
+    printf("\n");
+
+    int qtd_nos = arvB_qtd_nos(root);
+    printf("%d\n", qtd_nos);
+
+    int qtd_chaves = arvB_qtd_chaves(root);
+    printf("%d\n", qtd_chaves);
+
+    arvB_destroi(root);
+
+    //arvB_imprime(root);
+    printf("\n");
+   
 return 0;
 }

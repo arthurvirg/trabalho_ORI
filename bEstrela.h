@@ -1,27 +1,36 @@
 #ifndef B_TREE_H
 #define B_TREE_H
 
-#define MAX_KEYS 10
-#define MIN_KEYS ((MAX_KEYS + 1) / 2)
+#define MAX_CHAVES 8
+#define MIN_CHAVES ((MAX_CHAVES - 1) / 2)
 
-struct BTreeNode {
-    int keys[MAX_KEYS];
-    struct BTreeNode* children[MAX_KEYS + 1];
-    int num_keys;
-    int is_leaf;
-};
+typedef struct NO {
+    int chaves[MAX_CHAVES - 1];
+    struct NO* filho[MAX_CHAVES];
+    int num_chaves;
+    int folha;
+}NoArvB;
 
-struct BTreeNode* arvB_cria();
-struct BTreeNode* arvB_criaNo();
-void arvB_destroi(struct BTreeNode* root);
-void arvB_splitNo(struct BTreeNode* parent, int index);
-void arvB_balanceNo(struct BTreeNode* parent, int index);
-void arvB_insere(struct BTreeNode** root, int key);
-void arvB_removeChave(struct BTreeNode* node, int index);
-void arvB_removeNo(struct BTreeNode** root, int key);
-void arvB_imprime(struct BTreeNode* root);
-struct BTreeNode* arvB_busca(struct BTreeNode* root, int key);
-int arvB_qnt_nos(struct BTreeNode* root);
-int arvB_qnt_chaves(struct BTreeNode* root);
+typedef NoArvB* ArvB;
+
+ArvB* arvB_cria();
+NoArvB* arvB_cria_no();
+void arvB_destroiNO(NoArvB* no);
+void arvB_destroi(ArvB* raiz);
+void arvB_mergeNo(NoArvB* no_pai, int posicao);
+void arvB_splitNo(ArvB no_pai, int posicao);
+void arvB_balanceNo(NoArvB* no_pai, int posicao);
+int arvB_insere_nao_cheio(NoArvB* no, int valor);
+int arvB_insere(ArvB* raiz, int valor);
+void arvB_removeChave(NoArvB* no, int posicao);
+void arvB_remove(ArvB* raiz, int chave);
+void arvB_imprime_recursivo(NoArvB* no);
+void arvB_imprime(ArvB* raiz);
+int arvB_busca_chave(NoArvB* no, int chave);
+int arvB_busca(ArvB* raiz, int valor);
+int arvB_qtd_nos(ArvB* raiz);
+int arvB_qtd_nos_recursivo(NoArvB* no);
+int arvB_qtd_chaves(ArvB* raiz);
+int arvB_qtd_chaves_recursivo(NoArvB* no);
 
 #endif

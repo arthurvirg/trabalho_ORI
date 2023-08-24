@@ -2,294 +2,374 @@
 #include <stdlib.h>
 #include "bEstrela.h"
 
-struct BTreeNode* arvB_cria() {
-    struct BTreeNode* root = arvB_criaNo();
-    return root;
-}
 
-struct BTreeNode* arvB_criaNo() {
-    struct BTreeNode* newNode = (struct BTreeNode*)malloc(sizeof(struct BTreeNode));
-    newNode->num_keys = 0;
-    newNode->is_leaf = 1;
-    for (int i = 0; i <= MAX_KEYS; i++) {
-        newNode->children[i] = NULL;
-    }
-    return newNode;
-}
-
-void arvB_destroi(struct BTreeNode* root) {
-    if (root != NULL) {
-        for (int i = 0; i <= root->num_keys; i++) {
-            arvB_destroi(root->children[i]);
-        }
-        free(root);
-    }
-}
-
-void arvB_mergeNo(struct BTreeNode* parent, int index) {
-    struct BTreeNode* leftChild = parent->children[index];
-    struct BTreeNode* rightChild = parent->children[index + 1];
-    
-    leftChild->keys[leftChild->num_keys] = parent->keys[index];
-    
-    for (int i = 0; i < rightChild->num_keys; i++) {
-        leftChild->keys[leftChild->num_keys + 1 + i] = rightChild->keys[i];
-    }
-    
-    if (!rightChild->is_leaf) {
-        for (int i = 0; i <= rightChild->num_keys; i++) {
-            leftChild->children[leftChild->num_keys + 1 + i] = rightChild->children[i];
+ArvB* arvB_cria() {
+    ArvB* novaArvore = (ArvB*)malloc(sizeof(ArvB));
+    if (novaArvore != NULL) {
+        NoArvB* raiz = arvB_cria_no();
+        if (raiz != NULL) {
+            raiz->num_chaves = 1;
+            raiz->folha = 1;
+            *novaArvore = raiz;
+        } else {
+            free(novaArvore);
+            novaArvore = NULL;
         }
     }
-    
-    for (int i = index; i < parent->num_keys - 1; i++) {
-        parent->keys[i] = parent->keys[i + 1];
-        parent->children[i + 1] = parent->children[i + 2];
-    }
-    
-    leftChild->num_keys += rightChild->num_keys + 1;
-    parent->num_keys--;
-    
-    free(rightChild);
+    return novaArvore;
 }
 
-void arvB_splitNo(struct BTreeNode* parent, int index) {
-    struct BTreeNode* newNode = arvB_criaNo();
-    struct BTreeNode* oldNode = parent->children[index];
-    newNode->is_leaf = oldNode->is_leaf;
-    newNode->num_keys = MAX_KEYS / 2;
+NoArvB* arvB_cria_no() {
+    NoArvB* no = (NoArvB*)malloc(sizeof(NoArvB));
+    if (no != NULL) {
+        no->num_chaves = 0;
+        no->folha = 1;
+        for (int i = 0; i < MAX_CHAVES; i++) {
+            no->filho[i] = NULL;
+        }
+        no->filho[MAX_CHAVES] = NULL; // Último ponteiro para filho
+    }
+    return no;
+}
 
-    for (int i = 0; i < MAX_KEYS / 2; i++) {
-        newNode->keys[i] = oldNode->keys[i + MAX_KEYS / 2];
+void arvB_destroiNO(NoArvB* no) {
+    if (no != NULL) {
+        for (int i = 0; i <= no->num_chaves; i++) {
+            arvB_destroiNO(no->filho[i]);
+        }
+        free(no);
+    } 
+}
+
+void arvB_destroi(ArvB* raiz){
+    if(raiz == NULL || *raiz == NULL){
+        return;
+    }
+    arvB_destroiNO(*raiz);
+    free(raiz);
+}
+
+void arvB_mergeNo(NoArvB* no_pai, int posicao) {
+    NoArvB* filhoEsq = no_pai->filho[posicao];
+    NoArvB* filhoDir = no_pai->filho[posicao + 1];
+    
+    filhoEsq->chaves[filhoEsq->num_chaves] = no_pai->chaves[posicao];
+    
+    for (int i = 0; i < filhoDir->num_chaves; i++) {
+        filhoEsq->chaves[filhoEsq->num_chaves + 1 + i] = filhoDir->chaves[i];
+    }
+    
+    if (!filhoDir->folha) {
+        for (int i = 0; i <= filhoDir->num_chaves; i++) {
+            filhoEsq->filho[filhoEsq->num_chaves + 1 + i] = filhoDir->filho[i];
+        }
+    }
+    
+    for (int i = posicao; i < no_pai->num_chaves - 1; i++) {
+        no_pai->chaves[i] = no_pai->chaves[i + 1];
+        no_pai->filho[i + 1] = no_pai->filho[i + 2];
+    }
+    
+    filhoEsq->num_chaves += filhoDir->num_chaves + 1;
+    no_pai->num_chaves--;
+    
+    free(filhoDir);
+}
+
+void arvB_splitNo(ArvB no_pai, int posicao) {
+    ArvB filho = no_pai->filho[posicao];
+    ArvB* novo_filho = arvB_cria();
+    (*novo_filho)->folha = filho->folha;
+    (*novo_filho)->num_chaves = MAX_CHAVES / 2 - 1;
+
+    for (int i = 0; i < MAX_CHAVES / 2 - 1; i++)
+    {
+        (*novo_filho)->chaves[i] = filho->chaves[i + MAX_CHAVES / 2];
     }
 
-    if (!oldNode->is_leaf) {
-        for (int i = 0; i <= MAX_KEYS / 2; i++) {
-            newNode->children[i] = oldNode->children[i + MAX_KEYS / 2];
-            oldNode->children[i + MAX_KEYS / 2] = NULL;
+    if (!filho->folha)
+    {
+        for (int i = 0; i < MAX_CHAVES / 2; i++)
+        {
+            (*novo_filho)->filho[i] = filho->filho[i + MAX_CHAVES / 2];
         }
     }
 
-    oldNode->num_keys = MAX_KEYS / 2;
-    
-    for (int i = parent->num_keys; i > index; i--) {
-        parent->children[i + 1] = parent->children[i];
+    filho->num_chaves = MAX_CHAVES / 2 - 1;
+
+    for (int i = no_pai->num_chaves; i >= posicao + 1; i--)
+    {
+        no_pai->filho[i + 1] = no_pai->filho[i];
     }
-    
-    parent->children[index + 1] = newNode;
-    
-    for (int i = parent->num_keys - 1; i >= index; i--) {
-        parent->keys[i + 1] = parent->keys[i];
+
+    no_pai->filho[posicao + 1] = (*novo_filho);
+
+    for (int i = no_pai->num_chaves - 1; i >= posicao; i--)
+    {
+        no_pai->chaves[i + 1] = no_pai->chaves[i];
     }
-    
-    parent->keys[index] = oldNode->keys[MAX_KEYS / 2];
-    parent->num_keys++;
+
+    no_pai->chaves[posicao] = filho->chaves[MAX_CHAVES / 2 - 1];
+    no_pai->num_chaves++;
 }
 
-void arvB_balanceNo(struct BTreeNode* parent, int index){
-    if (parent == NULL) {
+void arvB_balanceNo(NoArvB* no_pai, int posicao){
+     if (no_pai == NULL) {
         return;
     }
 
-    struct BTreeNode* child = parent->children[index];
+    NoArvB* filho = no_pai->filho[posicao];
 
-    if (child->num_keys > MAX_KEYS) {
-        arvB_splitNo(parent, index);
-    } else if (child->num_keys < MIN_KEYS) {
-        int leftIndex = index - 1;
-        int rightIndex = index + 1;
+    if (filho->num_chaves > MAX_CHAVES) {
+        arvB_splitNo(no_pai, posicao);
+    } else if (filho->num_chaves < MIN_CHAVES) {
+        int esquerda = posicao - 1;
+        int direita = posicao + 1;
 
-        if (leftIndex >= 0 && parent->children[leftIndex]->num_keys > MIN_KEYS) {
+        if (esquerda >= 0 && no_pai->filho[esquerda]->num_chaves > MIN_CHAVES) {
             // Move uma chave do nó pai para o filho carente
-            child->num_keys++;
-            for (int i = child->num_keys - 1; i > 0; i--) {
-                child->keys[i] = child->keys[i - 1];
+            NoArvB* filhoEsq = no_pai->filho[esquerda];
+            filho->chaves[filho->num_chaves] = no_pai->chaves[esquerda];
+            filho->num_chaves++;
+            no_pai->chaves[esquerda] = filhoEsq->chaves[filhoEsq->num_chaves - 1];
+            filhoEsq->num_chaves--;
+
+            if (!filho->folha) {
+                filho->filho[filho->num_chaves] = filhoEsq->filho[filhoEsq->num_chaves + 1];
+                filhoEsq->filho[filhoEsq->num_chaves + 1] = NULL;
             }
-            child->keys[0] = parent->keys[leftIndex];
-            parent->keys[leftIndex] = parent->children[leftIndex]->keys[parent->children[leftIndex]->num_keys - 1];
-            parent->children[leftIndex]->num_keys--;
-        } else if (rightIndex <= parent->num_keys && parent->children[rightIndex]->num_keys > MIN_KEYS) {
+        } else if (direita <= no_pai->num_chaves && no_pai->filho[direita]->num_chaves > MIN_CHAVES) {
             // Move uma chave do nó pai para o filho carente
-            child->num_keys++;
-            child->keys[child->num_keys - 1] = parent->keys[index];
-            parent->keys[index] = parent->children[rightIndex]->keys[0];
-            for (int i = 0; i < parent->children[rightIndex]->num_keys - 1; i++) {
-                parent->children[rightIndex]->keys[i] = parent->children[rightIndex]->keys[i + 1];
+            NoArvB* filhoDir = no_pai->filho[direita];
+            filho->num_chaves++;
+            for (int i = filho->num_chaves - 1; i > 0; i--) {
+                filho->chaves[i] = filho->chaves[i - 1];
             }
-            parent->children[rightIndex]->num_keys--;
-        } else if (leftIndex >= 0) {
+            filho->chaves[0] = no_pai->chaves[posicao];
+            no_pai->chaves[posicao] = filhoDir->chaves[0];
+            for (int i = 0; i < filhoDir->num_chaves - 1; i++) {
+                filhoDir->chaves[i] = filhoDir->chaves[i + 1];
+            }
+            filho->num_chaves++;
+            filhoDir->num_chaves--;
+
+            if (!filho->folha) {
+                filho->filho[0] = filhoDir->filho[0];
+                for (int i = 0; i < filhoDir->num_chaves; i++) {
+                    filhoDir->filho[i] = filhoDir->filho[i + 1];
+                }
+            }
+        } else if (esquerda >= 0) {
             // Fusão com o filho à esquerda
-            arvB_mergeNo(parent, leftIndex);
+            arvB_mergeNo(no_pai, esquerda);
         } else {
             // Fusão com o filho à direita
-            arvB_mergeNo(parent, index);
+            arvB_mergeNo(no_pai, posicao);
         }
     }
 }
 
-void arvB_insere(struct BTreeNode** root, int key) {
-    if (*root == NULL) {
-        struct BTreeNode* newNode = arvB_criaNo();
-        newNode->keys[0] = key;
-        newNode->num_keys = 1;
-        *root = newNode;
+int arvB_insere_nao_cheio(NoArvB* no, int valor)
+{
+    int i = no->num_chaves - 1;
+
+    if (no->folha)
+    {
+        while (i >= 0 && valor < no->chaves[i])
+        {
+            no->chaves[i + 1] = no->chaves[i];
+            i--;
+        }
+        no->chaves[i + 1] = valor;
+        no->num_chaves++;
+    }
+    else
+    {
+        while (i >= 0 && valor < no->chaves[i])
+        {
+            i--;
+        }
+        i++;
+        if (no->filho[i]->num_chaves == MAX_CHAVES - 1)
+        {
+            arvB_splitNo(no, i);
+            if (valor > no->chaves[i])
+            {
+                i++;
+            }
+        }
+        arvB_insere_nao_cheio(no->filho[i], valor); 
+    }
+   
+    return 1;
+}
+
+int arvB_insere(ArvB* raiz, int valor) {
+     ArvB raiz_atual = *raiz;
+    if (raiz_atual->num_chaves == MAX_CHAVES - 1)
+    {
+        ArvB* nova_raiz = arvB_cria();
+        (*nova_raiz)->folha = 0;
+        (*nova_raiz)->filho[0] = raiz_atual;
+        arvB_splitNo((*nova_raiz), 0);
+        arvB_insere_nao_cheio((*nova_raiz), valor);
+        *raiz = (*nova_raiz);
+    }
+    else
+    {
+        arvB_insere_nao_cheio(raiz_atual, valor);
+    }
+    return 1;
+}
+
+void arvB_removeChave(NoArvB* no, int posicao) {
+    for (int i = posicao; i < no->num_chaves - 1; i++) {
+        no->chaves[i] = no->chaves[i + 1];
+    }
+    no->num_chaves--;
+    printf("No %d removido com sucesso!\n", no->chaves);
+}
+
+void arvB_remove(ArvB* raiz, int chave) {
+    if (*raiz == NULL) {
         return;
     }
 
-    struct BTreeNode* currentNode = *root;
-    struct BTreeNode* parent = NULL;
-    int index;
+    NoArvB* no_atual = *raiz;
+    NoArvB* no_pai = NULL;
+    int posicao;
 
-    while (!currentNode->is_leaf) {
-        parent = currentNode;
-        for (index = 0; index < currentNode->num_keys; index++) {
-            if (key < currentNode->keys[index]) {
+    while (!no_atual->folha) {
+        no_pai = no_atual;
+        for (posicao = 0; posicao < no_atual->num_chaves; posicao++) {
+            if (chave < no_atual->chaves[posicao]) {
                 break;
             }
         }
-        currentNode = currentNode->children[index];
+        no_atual = no_atual->filho[posicao];
     }
 
-    for (index = 0; index < currentNode->num_keys; index++) {
-        if (key < currentNode->keys[index]) {
+    for (posicao = 0; posicao < no_atual->num_chaves; posicao++) {
+        if (chave == no_atual->chaves[posicao]) {
             break;
         }
     }
 
-    if (currentNode->num_keys < MAX_KEYS) {
-        for (int i = currentNode->num_keys; i > index; i--) {
-            currentNode->keys[i] = currentNode->keys[i - 1];
-        }
-        currentNode->keys[index] = key;
-        currentNode->num_keys++;
-    } else {
-        arvB_splitNo(parent, index);
-        if (key >= parent->keys[index]) {
-            index++;
-        }
-        arvB_insere(&(parent->children[index]), key);
-    }
-    
-    arvB_balanceNo(parent, index);
-}
-
-void arvB_removeChave(struct BTreeNode* node, int index) {
-    for (int i = index; i < node->num_keys - 1; i++) {
-        node->keys[i] = node->keys[i + 1];
-    }
-    node->num_keys--;
-    printf("Chave %d removida com sucesso!", index);
-}
-
-void arvB_removeNo(struct BTreeNode** root, int key) {
-    if (*root == NULL) {
-        return;
-    }
-
-    struct BTreeNode* currentNode = *root;
-    struct BTreeNode* parent = NULL;
-    int index;
-
-    while (!currentNode->is_leaf) {
-        parent = currentNode;
-        for (index = 0; index < currentNode->num_keys; index++) {
-            if (key < currentNode->keys[index]) {
-                break;
-            }
-        }
-        currentNode = currentNode->children[index];
-    }
-
-    for (index = 0; index < currentNode->num_keys; index++) {
-        if (key == currentNode->keys[index]) {
-            break;
-        }
-    }
-
-    if (index < currentNode->num_keys && currentNode->keys[index] == key) {
-        if (currentNode->is_leaf) {
-            arvB_removeChave(currentNode, index);
+    if (posicao < no_atual->num_chaves && no_atual->chaves[posicao] == chave) {
+        if (no_atual->folha) {
+            arvB_removeChave(no_atual, posicao);
         } else {
             // Substitua o nó a ser removido pelo maior valor do nó à esquerda ou pelo menor valor do nó à direita.
-            struct BTreeNode* pred = currentNode->children[index];
-            while (!pred->is_leaf) {
-                pred = pred->children[pred->num_keys];
+            NoArvB* pred = no_atual->filho[posicao];
+            while (!pred->folha) {
+                pred = pred->filho[pred->num_chaves];
             }
-            currentNode->keys[index] = pred->keys[pred->num_keys - 1];
-            arvB_removeNo(&(currentNode->children[index]), pred->keys[pred->num_keys - 1]);
+            no_atual->chaves[posicao] = pred->chaves[pred->num_chaves - 1];
+            arvB_remove(&(no_atual->filho[posicao]), pred->chaves[pred->num_chaves - 1]);
         }
     } else {
-        if (!currentNode->is_leaf) {
-            arvB_removeNo(&(currentNode->children[index]), key);
+        if (!no_atual->folha) {
+            arvB_remove(&(no_atual->filho[posicao]), chave);
         }
     }
     
     // Balanceamento após a remoção
-    arvB_balanceNo(parent, index);
+    arvB_balanceNo(no_pai, posicao);
 
     // Se a &raiz ficou vazia, atualize-a
-    if (parent == NULL && (*root)->num_keys == 0) {
-        struct BTreeNode* newRoot = (*root)->children[0];
-        free(*root);
-        *root = newRoot;
+    if (no_pai == NULL && (*raiz)->num_chaves == 0) {
+        NoArvB* newraiz = (*raiz)->filho[0];
+        free(*raiz);
+        *raiz = newraiz;
     }
-    printf("No %d removido com sucesso!", key);
 }
 
-void arvB_imprime(struct BTreeNode* root) {
-    if (root != NULL) {
-        int i;
-        for (i = 0; i < root->num_keys; i++) {
-            arvB_imprime(root->children[i]);
-            printf("%d ", root->keys[i]);
+void arvB_imprime_recursivo(NoArvB* no) {
+    if (no != NULL) {
+        for (int i = 0; i < no->num_chaves; i++) {
+            printf("%d ", no->chaves[i]);
         }
-        arvB_imprime(root->children[i]);
+
+        for (int i = 0; i <= no->num_chaves; i++) {
+            arvB_imprime_recursivo(no->filho[i]);
+        }
     }
 }
 
-struct BTreeNode* arvB_busca(struct BTreeNode* root, int key) {
-    if (root == NULL) {
-        return NULL;
+void arvB_imprime(ArvB* raiz) {
+    if (raiz != NULL && *raiz != NULL) {
+        arvB_imprime_recursivo(*raiz);
     }
-
-    int index = 0;
-    while (index < root->num_keys && key > root->keys[index]) {
-        index++;
-    }
-
-    if (index < root->num_keys && key == root->keys[index]) {
-        return root;
-    }
-
-    if (root->is_leaf) {
-        return NULL;
-    }
-
-    return arvB_busca(root->children[index], key);
 }
 
-int arvB_qnt_nos(struct BTreeNode* root) {
-    if (root == NULL) {
+int arvB_busca_chave(NoArvB* no, int chave) {
+    if (no == NULL) {
         return 0;
     }
 
-    int count = 1;
-    for (int i = 0; i <= root->num_keys; i++) {
-        count += arvB_qnt_nos(root->children[i]);
+    int posicao = 0;
+    while (posicao < no->num_chaves && chave > no->chaves[posicao]) {
+        posicao++;
     }
-    printf("%d ", count);
-    return 0;
-}
 
-int arvB_qnt_chaves(struct BTreeNode* root) {
-    if (root == NULL) {
+    if (posicao < no->num_chaves && chave == no->chaves[posicao]) {
+        return 1;
+    }
+
+    if (no->folha) {
         return 0;
     }
 
-    int count = root->num_keys;
-    for (int i = 0; i <= root->num_keys; i++) {
-        count += arvB_qnt_chaves(root->children[i]);
+    return arvB_busca_chave(no->filho[posicao], chave);
+}
+
+int arvB_busca(ArvB* raiz, int valor) {
+    if (raiz == NULL || *raiz == NULL) {
+        return 0;
     }
-    printf("%d ", count);
-    return 0;
+    return arvB_busca_chave(*raiz, valor);
+}
+
+int arvB_qtd_nos_recursivo(NoArvB* no) {
+    if (no == NULL) {
+        return 0;
+    }
+
+    int cont = 1;
+    if (!no->folha){
+        for (int i = 0; i <= no->num_chaves; i++) {
+            cont += arvB_qtd_nos_recursivo(no->filho[i]);           
+        }
+    }
+    return cont;
+}
+
+int arvB_qtd_nos(ArvB* raiz) {
+    if (raiz == NULL || *raiz == NULL) {
+        return 0;
+    }
+    
+    return arvB_qtd_nos_recursivo(*raiz);
+}
+
+int arvB_qtd_chaves_recursivo(NoArvB* no) {
+    if (no == NULL) {
+        return 0;
+    }
+
+    int cont = no->num_chaves; 
+    if(!no->folha){
+        for (int i = 0; i <= no->num_chaves; i++) {
+            cont = cont + arvB_qtd_chaves_recursivo(no->filho[i]);     
+        }
+    }
+    return cont;
+}
+
+int arvB_qtd_chaves(ArvB* raiz) {
+    if (raiz == NULL || *raiz == NULL) {
+        return 0;
+    }
+    
+    return arvB_qtd_chaves_recursivo(*raiz);
 }
