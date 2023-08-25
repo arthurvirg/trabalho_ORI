@@ -5,38 +5,50 @@
 
 int main() {
 
-    int vetor[50];
-    for(int i = 1; i <= 50; i++)
-    {
-        vetor[i] = rand() %100 ;
-    }
-
     ArvB* minha_arvore = arvB_cria();
-    
-    for (int j = 1; j <= 50; j++) {
-        arvB_insere(minha_arvore, vetor[j]);
-    }
+
+    arvB_insere(minha_arvore, 0);
+    arvB_insere(minha_arvore, 1);
+    arvB_insere(minha_arvore, 2);
+    arvB_insere(minha_arvore, 5);
+    arvB_insere(minha_arvore, 6);
+    arvB_insere(minha_arvore, 7);
+    arvB_insere(minha_arvore, 8);
+    arvB_insere(minha_arvore, 9);
+    arvB_insere(minha_arvore, 10);
+    arvB_insere(minha_arvore, 12);
+    arvB_insere(minha_arvore, 16);
+    arvB_insere(minha_arvore, 18);   
+    arvB_insere(minha_arvore, 25);
+    arvB_insere(minha_arvore, 27);
+    arvB_insere(minha_arvore, 28);
+    arvB_insere(minha_arvore, 29);
+    arvB_insere(minha_arvore, 30);
+   
 
     arvB_imprime(minha_arvore);
+    printf("\n");
     printf("\n");
 
     bool result = arvB_busca(minha_arvore, 30);
     if (result){
-        printf("Valor 30 encontrado!\n");
+        printf("Valor 30 encontrado!\n\n");
     }
     else{
-        printf("Valor 30 nao encontrado!\n");
+        printf("Valor 30 nao encontrado!\n\n");
     }
     
     int qtd_nos1 = arvB_qtd_nos(minha_arvore);
     printf("Qtd de nos: %d\n", qtd_nos1);
 
     int qtd_chaves1 = arvB_qtd_chaves(minha_arvore);
-    printf("Qtd de chaves: %d\n", qtd_chaves1);
+    printf("Qtd de chaves: %d\n\n", qtd_chaves1);
 
-    arvB_remove(minha_arvore, 99);
+    arvB_remove(minha_arvore, 30);
+    printf("\n");
 
     arvB_imprime(minha_arvore);
+    printf("\n");
     printf("\n");
 
     int qtd_nos2 = arvB_qtd_nos(minha_arvore);

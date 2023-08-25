@@ -24,10 +24,10 @@ NoArvB* arvB_cria_no() {
     if (no != NULL) {
         no->num_chaves = 0;
         no->folha = 1;
-        for (int i = 0; i < MAX_CHAVES; i++) {
+        for (int i = 0; i < ordem; i++) {
             no->filho[i] = NULL;
         }
-        no->filho[MAX_CHAVES] = NULL; // Último ponteiro para filho
+        no->filho[ordem] = NULL; // Último ponteiro para filho
     }
     return no;
 }
@@ -53,17 +53,17 @@ void arvB_mergeNo(NoArvB* no_pai, int posicao) {
     NoArvB* filhoEsq = no_pai->filho[posicao];
     NoArvB* filhoDir = no_pai->filho[posicao + 1];
     
-    int min_chaves = (2 * MAX_CHAVES - 1) / 3;  // Mínimo de chaves permitido
+    int min_chaves = (ordem / 2) - 1;  // Mínimo de chaves permitido
 
-    filhoEsq->chaves[(MAX_CHAVES / 2) - 1] = no_pai->chaves[posicao];
+    filhoEsq->chaves[(ordem / 2) - 1] = no_pai->chaves[posicao];
     
     for (int i = 0; i < filhoDir->num_chaves; i++) {
-        filhoEsq->chaves[i + (MAX_CHAVES / 2)] = filhoDir->chaves[i];
+        filhoEsq->chaves[i + (ordem / 2)] = filhoDir->chaves[i];
     }
     
     if (!filhoDir->folha) {
         for (int i = 0; i <= filhoDir->num_chaves; i++) {
-            filhoEsq->filho[i + (MAX_CHAVES / 2)] = filhoDir->filho[i];
+            filhoEsq->filho[i + (ordem / 2)] = filhoDir->filho[i];
         }
     }
     
@@ -91,22 +91,20 @@ void arvB_mergeNo(NoArvB* no_pai, int posicao) {
 void arvB_splitNo(NoArvB* no_pai, int posicao) {
     NoArvB* filho = no_pai->filho[posicao];
     ArvB* novo_filho = arvB_cria();
-    
-    int min_chaves = (2 * MAX_CHAVES - 1) / 3;  // Mínimo de chaves permitido
 
-    int num_chaves_mover = (MAX_CHAVES / 2) - 1;  // Número de chaves a serem movidas
+    int num_chaves_mover = (ordem / 2) - 1;  // Número de chaves a serem movidas
 
     novo_filho = arvB_cria();
     (*novo_filho)->folha = filho->folha;
     (*novo_filho)->num_chaves = num_chaves_mover;
 
     for (int i = 0; i < num_chaves_mover; i++) {
-        (*novo_filho)->chaves[i] = filho->chaves[i + MAX_CHAVES / 2];
+        (*novo_filho)->chaves[i] = filho->chaves[i + ordem / 2];
     }
 
     if (!filho->folha) {
         for (int i = 0; i <= num_chaves_mover; i++) {
-            (*novo_filho)->filho[i] = filho->filho[i + MAX_CHAVES / 2];
+            (*novo_filho)->filho[i] = filho->filho[i + ordem / 2];
         }
     }
 
@@ -126,71 +124,71 @@ void arvB_splitNo(NoArvB* no_pai, int posicao) {
     no_pai->num_chaves++;
 }
 
-void arvB_balanceNo(NoArvB* no_pai, int posicao) {
-     if (no_pai == NULL) {
+void arvB_balanceNo(NoArvB* no_atual, int posicao) {
+     if (no_atual == NULL) {
         return;
     }
 
-    NoArvB* filho = no_pai->filho[posicao];
+    NoArvB* no_filho = no_atual;
 
-    int min_chaves = (2 * MAX_CHAVES - 1) / 3;  // Mínimo de chaves permitido
+    int min_chaves = (ordem / 2) - 1;  // Mínimo de chaves permitido
 
-    if (filho->num_chaves < min_chaves) {
+    if (no_filho->num_chaves < min_chaves) {
         int esquerda = posicao - 1;
         int direita = posicao + 1;
 
-        if (esquerda >= 0 && no_pai->filho[esquerda]->num_chaves > min_chaves) {
+        if (esquerda >= 0 && no_atual->filho[esquerda]->num_chaves > min_chaves) {
             // Redistribuir chaves do filho à esquerda
-            NoArvB* filhoEsq = no_pai->filho[esquerda];
-            int total_chaves = filhoEsq->num_chaves + filho->num_chaves;
+            NoArvB* filhoEsq = no_atual->filho[esquerda];
+            int total_chaves = filhoEsq->num_chaves + no_filho->num_chaves;
 
             // Mover metade das chaves do filho à esquerda para o filho carente
-            for (int i = filho->num_chaves - 1; i >= 0; i--) {
-                filho->chaves[i + total_chaves - filho->num_chaves] = filho->chaves[i];
+            for (int i = no_filho->num_chaves - 1; i >= 0; i--) {
+                no_filho->chaves[i + total_chaves - no_filho->num_chaves] = no_filho->chaves[i];
             }
             
-            for (int i = total_chaves - filho->num_chaves - 1; i >= 0; i--) {
-                filho->chaves[i] = filhoEsq->chaves[filhoEsq->num_chaves - 1];
+            for (int i = total_chaves - no_filho->num_chaves - 1; i >= 0; i--) {
+                no_filho->chaves[i] = filhoEsq->chaves[filhoEsq->num_chaves - 1];
                 filhoEsq->num_chaves--;
             }
 
-            if (!filho->folha) {
-                for (int i = total_chaves - filho->num_chaves; i >= 0; i--) {
-                    filho->filho[i + total_chaves - filho->num_chaves + 1] = filho->filho[i];
+            if (!no_filho->folha) {
+                for (int i = total_chaves - no_filho->num_chaves; i >= 0; i--) {
+                    no_filho->filho[i + total_chaves - no_filho->num_chaves + 1] = no_filho->filho[i];
                 }
-                filho->filho[0] = filhoEsq->filho[filhoEsq->num_chaves];
+                no_filho->filho[0] = filhoEsq->filho[filhoEsq->num_chaves];
             }
 
-            no_pai->chaves[esquerda] = filhoEsq->chaves[filhoEsq->num_chaves - 1];
-        } else if (direita < no_pai->num_chaves && no_pai->filho[direita]->num_chaves > min_chaves) {
+            no_atual->chaves[esquerda] = filhoEsq->chaves[filhoEsq->num_chaves - 1];
+        } else if (direita < no_atual->num_chaves && no_atual->filho[direita]->num_chaves > min_chaves) {
             // Redistribuir chaves do filho à direita
-            NoArvB* filhoDir = no_pai->filho[direita];
-            int total_chaves = filho->num_chaves + filhoDir->num_chaves;
+            NoArvB* filhoDir = no_atual->filho[direita];
+            int total_chaves = no_filho->num_chaves + filhoDir->num_chaves;
 
             // Mover metade das chaves do filho à direita para o filho carente
             for (int i = 0; i < filhoDir->num_chaves; i++) {
-                filho->chaves[i + filho->num_chaves] = filhoDir->chaves[i];
+                no_filho->chaves[i + no_filho->num_chaves] = filhoDir->chaves[i];
             }
             
-            for (int i = 0; i < total_chaves - filho->num_chaves; i++) {
-                filhoDir->chaves[i] = filhoDir->chaves[i + filho->num_chaves];
+            for (int i = 0; i < total_chaves - no_filho->num_chaves; i++) {
+                filhoDir->chaves[i] = filhoDir->chaves[i + no_filho->num_chaves];
                 filhoDir->num_chaves--;
             }
 
-            if (!filho->folha) {
-                for (int i = 0; i <= total_chaves - filho->num_chaves; i++) {
-                    filho->filho[i + filho->num_chaves] = filhoDir->filho[i];
+            if (!no_filho->folha) {
+                for (int i = 0; i <= total_chaves - no_filho->num_chaves; i++) {
+                    no_filho->filho[i + no_filho->num_chaves] = filhoDir->filho[i];
                 }
-                filhoDir->filho[0] = filhoDir->filho[total_chaves - filho->num_chaves];
+                filhoDir->filho[0] = filhoDir->filho[total_chaves - no_filho->num_chaves];
             }
 
-            no_pai->chaves[posicao] = filhoDir->chaves[0];
+            no_atual->chaves[posicao] = filhoDir->chaves[0];
         } else if (esquerda >= 0) {
             // Fusão com o filho à esquerda
-            arvB_mergeNo(no_pai, esquerda);
+            arvB_mergeNo(no_atual, esquerda);
         } else {
             // Fusão com o filho à direita
-            arvB_mergeNo(no_pai, posicao);
+            arvB_mergeNo(no_atual, posicao);
         }
     }
 }
@@ -216,7 +214,7 @@ int arvB_insere_nao_cheio(NoArvB* no, int valor)
             i--;
         }
         i++;
-        if (no->filho[i]->num_chaves == MAX_CHAVES - 1)
+        if (no->filho[i]->num_chaves == ordem - 1)
         {
             arvB_splitNo(no, i);
             if (valor > no->chaves[i])
@@ -232,7 +230,7 @@ int arvB_insere_nao_cheio(NoArvB* no, int valor)
 
 int arvB_insere(ArvB* raiz, int valor) {
      ArvB raiz_atual = *raiz;
-    if (raiz_atual->num_chaves == MAX_CHAVES - 1)
+    if (raiz_atual->num_chaves == ordem - 1)
     {
         ArvB* nova_raiz = arvB_cria();
         (*nova_raiz)->folha = 0;
@@ -259,7 +257,7 @@ void arvB_remove(ArvB* raiz, int chave) {
     if (*raiz == NULL) {
         return;
     }
-
+    
     NoArvB* no_atual = *raiz;
     NoArvB* no_pai = NULL;
     int posicao;
@@ -300,7 +298,7 @@ void arvB_remove(ArvB* raiz, int chave) {
     }
     
     // Balanceamento após a remoção
-    arvB_balanceNo(no_pai, posicao);
+    arvB_balanceNo(no_atual, posicao);
 
     // Se a &raiz ficou vazia, atualize-a
     if (no_pai == NULL && (*raiz)->num_chaves == 0) {
@@ -310,21 +308,31 @@ void arvB_remove(ArvB* raiz, int chave) {
     }
 }
 
-void arvB_imprime_recursivo(NoArvB* no) {
+void arvB_imprime_recursivo(NoArvB* no, int nivel) {
     if (no != NULL) {
-        for (int i = 0; i < no->num_chaves; i++) {
+        if (nivel == 1){
+        printf("No pai: ");
+        for (int i = 0; i < no->num_chaves; i++) {          
             printf("%d ", no->chaves[i]);
         }
-
+        }
+        else if (nivel == 2){
+            printf("\nNo filho: ");
+            for (int i = 0; i < no->num_chaves; i++) {
+            printf("%d ", no->chaves[i]);
+        }
+        }
         for (int i = 0; i <= no->num_chaves; i++) {
-            arvB_imprime_recursivo(no->filho[i]);
+            nivel = 2;
+            arvB_imprime_recursivo(no->filho[i], nivel);
         }
     }
 }
 
 void arvB_imprime(ArvB* raiz) {
+    int nivel = 1;
     if (raiz != NULL && *raiz != NULL) {
-        arvB_imprime_recursivo(*raiz); 
+        arvB_imprime_recursivo(*raiz, nivel); 
     }
 }
 
