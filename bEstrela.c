@@ -307,19 +307,6 @@ void  arvB_remove(ArvB* raiz, int chave) {
     }
 }
 
-
-void enfileirar(ArvB fila[], int* frente, int* fim, ArvB no) {
-    (*fim)++;
-    fila[*fim] = no;
-}
-
-// Função para desenfileirar um nó
-ArvB desenfileirar(ArvB fila[], int* frente) {
-    ArvB no = fila[*frente];
-    (*frente)++;
-    return no;
-}
-
 void arvB_imprime_pais(NoArvB* no, int nivel, int posicao) {
     if (no == NULL) {
         return;

@@ -25,8 +25,6 @@ int arvB_insere_nao_cheio(ArvB no, int valor);
 int arvB_insere(ArvB* raiz, int valor);
 void arvB_removeChave(ArvB no, int posicao);
 void arvB_remove(ArvB* raiz, int chave);
-void enfileirar(ArvB fila[], int* frente, int* fim, ArvB no);
-ArvB desenfileirar(ArvB fila[], int* frente);
 void arvB_imprime_pais(NoArvB* no, int nivel, int posicao);
 void arvB_imprime_pais_nivel(ArvB raiz);
 void arvB_imprime_folhas(NoArvB* no, int nivel, int posicao);
