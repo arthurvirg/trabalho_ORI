@@ -12,24 +12,29 @@ typedef struct NO {
 
 typedef NoArvB* ArvB;
 
-ArvB* arvB_cria();
-NoArvB* arvB_cria_no();
-void arvB_destroiNO(NoArvB* no);
-void arvB_destroi(ArvB* raiz);
-void arvB_mergeNo(NoArvB* no_pai, int posicao);
-void arvB_splitNo(NoArvB* no_pai, int posicao);
-void arvB_balanceNo(NoArvB* no_atual, int posicao);
-int arvB_insere_nao_cheio(NoArvB* no, int valor);
-int arvB_insere(ArvB* raiz, int valor);
-void arvB_removeChave(NoArvB* no, int posicao);
-void arvB_remove(ArvB* raiz, int chave);
-void arvB_imprime_recursivo(NoArvB* no, int nivel);
-void arvB_imprime(ArvB* raiz);
-int arvB_busca_chave(NoArvB* no, int chave);
-int arvB_busca(ArvB* raiz, int valor);
-int arvB_qtd_nos(ArvB* raiz);
-int arvB_qtd_nos_recursivo(NoArvB* no);
-int arvB_qtd_chaves(ArvB* raiz);
-int arvB_qtd_chaves_recursivo(NoArvB* no);
+ArvB arvB_cria();
 
+void arvB_destroiNO(ArvB no);
+void arvB_destroi(ArvB* raiz);
+void arvB_mergeNo(ArvB no_pai, int posicao);
+void arvB_splitNo(ArvB no_pai, int posicao);
+void arvB_redistribuir_esquerda(ArvB no_pai, int posicao);
+void arvB_redistribuir_direita(ArvB no_pai, int posicao);
+void arvB_balanceNo(ArvB no_atual, int posicao);
+int arvB_insere_nao_cheio(ArvB no, int valor);
+int arvB_insere(ArvB* raiz, int valor);
+void arvB_removeChave(ArvB no, int posicao);
+void arvB_remove(ArvB* raiz, int chave);
+void enfileirar(ArvB fila[], int* frente, int* fim, ArvB no);
+ArvB desenfileirar(ArvB fila[], int* frente);
+void arvB_imprime_pais(NoArvB* no, int nivel, int posicao);
+void arvB_imprime_pais_nivel(ArvB raiz);
+void arvB_imprime_folhas(NoArvB* no, int nivel, int posicao);
+void arvB_imprime_folhas_nivel(ArvB raiz);
+int arvB_busca_chave(ArvB no, int chave);
+int arvB_busca(ArvB raiz, int valor);
+int arvB_qtd_nos_recursivo(ArvB no);
+int arvB_qtd_nos(ArvB raiz);
+int arvB_qtd_chaves_recursivo(ArvB no);
+int arvB_qtd_chaves(ArvB raiz);
 #endif

@@ -4,31 +4,40 @@
 #include <stdbool.h>
 
 int main() {
+    
+    // int vetor[50];
+    // for(int i = 0; i < 50; i++)
+    // {
+    //     vetor[i] = rand() %100 ;
+    // }
 
-    ArvB* minha_arvore = arvB_cria();
+    ArvB minha_arvore = arvB_cria();
 
-    arvB_insere(minha_arvore, 0);
-    arvB_insere(minha_arvore, 1);
-    arvB_insere(minha_arvore, 2);
-    arvB_insere(minha_arvore, 5);
-    arvB_insere(minha_arvore, 6);
-    arvB_insere(minha_arvore, 7);
-    arvB_insere(minha_arvore, 8);
-    arvB_insere(minha_arvore, 9);
-    arvB_insere(minha_arvore, 10);
-    arvB_insere(minha_arvore, 12);
-    arvB_insere(minha_arvore, 16);
-    arvB_insere(minha_arvore, 18);   
-    arvB_insere(minha_arvore, 25);
-    arvB_insere(minha_arvore, 27);
-    arvB_insere(minha_arvore, 28);
-    arvB_insere(minha_arvore, 29);
-    arvB_insere(minha_arvore, 30);
-   
+    //  for (int i = 0; i <= 49; i++)
+    // {
+    //     arvB_insere(&minha_arvore, vetor[i] );
+    // }
+    
+    arvB_insere(&minha_arvore, 0);
+    arvB_insere(&minha_arvore, 1);
+    arvB_insere(&minha_arvore, 2);
+    arvB_insere(&minha_arvore, 5);
+    arvB_insere(&minha_arvore, 6);
+    arvB_insere(&minha_arvore, 7);
+    arvB_insere(&minha_arvore, 8);
+    arvB_insere(&minha_arvore, 9);
+    arvB_insere(&minha_arvore, 10);
+    arvB_insere(&minha_arvore, 12);
+    arvB_insere(&minha_arvore, 16);
+    arvB_insere(&minha_arvore, 18);   
+    arvB_insere(&minha_arvore, 25);
+    arvB_insere(&minha_arvore, 27);
+    arvB_insere(&minha_arvore, 28);
+    arvB_insere(&minha_arvore, 29);
+    arvB_insere(&minha_arvore, 30);
 
-    arvB_imprime(minha_arvore);
-    printf("\n");
-    printf("\n");
+    arvB_imprime_pais_nivel(minha_arvore);
+    arvB_imprime_folhas_nivel(minha_arvore);
 
     bool result = arvB_busca(minha_arvore, 30);
     if (result){
@@ -44,12 +53,15 @@ int main() {
     int qtd_chaves1 = arvB_qtd_chaves(minha_arvore);
     printf("Qtd de chaves: %d\n\n", qtd_chaves1);
 
-    arvB_remove(minha_arvore, 30);
+    arvB_remove(&minha_arvore, 8);
     printf("\n");
 
-    arvB_imprime(minha_arvore);
-    printf("\n");
-    printf("\n");
+    arvB_imprime_pais_nivel(minha_arvore);
+    arvB_imprime_folhas_nivel(minha_arvore);
+
+    // arvB_imprime(minha_arvore);
+    // printf("\n");
+    // printf("\n");
 
     int qtd_nos2 = arvB_qtd_nos(minha_arvore);
     printf("Qtd de nos: %d\n", qtd_nos2);
@@ -57,7 +69,7 @@ int main() {
     int qtd_chaves2 = arvB_qtd_chaves(minha_arvore);
     printf("Qtd de chaves: %d\n", qtd_chaves2);
 
-    arvB_destroi(minha_arvore);
+    arvB_destroi(&minha_arvore);
    
 return 0;
 }
