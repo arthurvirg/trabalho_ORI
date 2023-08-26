@@ -1,3 +1,9 @@
+/*
+Arthur Takahiro Virgolino Nishimura - 800707
+Eduardo Henrique Spinelli  - 800220
+Christian Coronel da Silva Polli - 798083
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "bEstrela.h"
