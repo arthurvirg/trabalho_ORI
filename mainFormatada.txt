@@ -1,0 +1,125 @@
+/*
+Arthur Takahiro Virgolino Nishimura - 800707
+Eduardo Henrique Spinelli  - 800220
+Christian Coronel da Silva Polli - 798083
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include "bEstrela.h"
+#include <stdbool.h>
+
+int main() {
+
+    ArvB minha_arvore = arvB_cria(); // criação da árvore
+
+    // variáveis para controle do menu
+    int x = 0;
+    int y = 0;
+
+    printf("Seja bem-vindo à árvore B-Estrela!\n");
+
+    // menu de seleção
+    while (x >= 0){
+      printf("Escolha uma das opções abaixo:\n");
+      printf("Digite 1 para inserir um valor.\n");
+      printf("Digite 2 para realizar a busca por um valor.\n");
+      printf("Digite 3 para remover um valor.\n");
+      printf("Digite 4 para verificar a quantidade de nós.\n");
+      printf("Digite 5 para verificar a quantidade de chaves.\n");
+      printf("Digite 6 para visualizar um exemplo de árvore!\n");
+      printf("Digite -1 para terminar o programa.\n");
+
+      scanf("%d", &x);
+
+      if(x == 1){
+        printf("Qual valor gostaria de inserir?\n");
+        scanf("%d", &y);
+        arvB_insere(&minha_arvore, y);
+        printf("Inserido com sucesso!\n");
+        arvB_imprime_pais_nivel(minha_arvore);
+        arvB_imprime_folhas_nivel(minha_arvore);
+        printf("\n");
+      }
+      else if(x == 2){
+        printf("Qual valor gostaria de buscar?\n");
+        scanf("%d", &y);
+        arvB_busca(minha_arvore, y);
+        arvB_imprime_pais_nivel(minha_arvore);
+        arvB_imprime_folhas_nivel(minha_arvore);
+        printf("\n");
+      }
+      else if(x == 3){
+        printf("Qual valor gostaria de remover?\n");
+        scanf("%d", &y);
+        arvB_remove(&minha_arvore, y);
+        arvB_imprime_pais_nivel(minha_arvore);
+        arvB_imprime_folhas_nivel(minha_arvore);
+        printf("\n");
+      }
+      else if(x == 4){
+        int qtd_nos1 = arvB_qtd_nos(minha_arvore);
+        printf("Qtd de nos: %d\n", qtd_nos1);
+      }
+      else if(x == 5){
+        int qtd_chaves1 = arvB_qtd_chaves(minha_arvore);
+        printf("Qtd de chaves: %d\n\n", qtd_chaves1);
+      }
+      else if(x == 6){
+        arvB_insere(&minha_arvore, 0);
+        arvB_insere(&minha_arvore, 1);
+        arvB_insere(&minha_arvore, 2);
+        arvB_insere(&minha_arvore, 5);
+        arvB_insere(&minha_arvore, 6);
+        arvB_insere(&minha_arvore, 7);
+        arvB_insere(&minha_arvore, 8);
+        arvB_insere(&minha_arvore, 9);
+        arvB_insere(&minha_arvore, 10);
+        arvB_insere(&minha_arvore, 12);
+        arvB_insere(&minha_arvore, 16);
+        arvB_insere(&minha_arvore, 18);   
+        arvB_insere(&minha_arvore, 25);
+        arvB_insere(&minha_arvore, 27);
+        arvB_insere(&minha_arvore, 28);
+        arvB_insere(&minha_arvore, 29);
+        arvB_insere(&minha_arvore, 30);
+    
+        arvB_imprime_pais_nivel(minha_arvore);
+        arvB_imprime_folhas_nivel(minha_arvore);
+        printf("\n");
+    
+        arvB_busca(minha_arvore, 30);
+        
+        
+        int qtd_nos1 = arvB_qtd_nos(minha_arvore);
+        printf("Qtd de nos: %d\n", qtd_nos1);
+    
+        int qtd_chaves1 = arvB_qtd_chaves(minha_arvore);
+        printf("Qtd de chaves: %d\n\n", qtd_chaves1);
+    
+        arvB_remove(&minha_arvore, 8);
+        printf("\n");
+    
+        arvB_imprime_pais_nivel(minha_arvore);
+        arvB_imprime_folhas_nivel(minha_arvore);
+        printf("\n");
+    
+        int qtd_nos2 = arvB_qtd_nos(minha_arvore);
+        printf("Qtd de nos: %d\n", qtd_nos2);
+    
+        int qtd_chaves2 = arvB_qtd_chaves(minha_arvore);
+        printf("Qtd de chaves: %d\n", qtd_chaves2);
+    
+        arvB_destroi(&minha_arvore);
+        break;
+      }
+      else if(x < 0){
+        arvB_destroi(&minha_arvore);
+        break;
+      }
+    }
+    
+  
+  
+   
+return 0;
+}
