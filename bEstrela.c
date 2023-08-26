@@ -76,23 +76,23 @@ void arvB_splitNo(ArvB no_pai, int posicao) {
     ArvB filho = no_pai->filho[posicao];
     ArvB novo_filho = arvB_cria();
 
-    int num_chaves_mover = (ordem / 2) - 1;  // Número de chaves a serem movidas
+    int num_chaves_move = (ordem / 2) - 1;  // Número de chaves a serem movidas
 
     novo_filho = arvB_cria();
     novo_filho->folha = filho->folha;
-    novo_filho->num_chaves = num_chaves_mover;
+    novo_filho->num_chaves = num_chaves_move;
 
-    for (int i = 0; i < num_chaves_mover; i++) {
+    for (int i = 0; i < num_chaves_move; i++) {
         novo_filho->chaves[i] = filho->chaves[i + ordem / 2];
     }
 
     if (!filho->folha) {
-        for (int i = 0; i <= num_chaves_mover; i++) {
+        for (int i = 0; i <= num_chaves_move; i++) {
             novo_filho->filho[i] = filho->filho[i + ordem / 2];
         }
     }
 
-    filho->num_chaves = num_chaves_mover;
+    filho->num_chaves = num_chaves_move;
 
     for (int i = no_pai->num_chaves; i >= posicao + 1; i--) {
         no_pai->filho[i + 1] = no_pai->filho[i];
@@ -104,7 +104,7 @@ void arvB_splitNo(ArvB no_pai, int posicao) {
         no_pai->chaves[i + 1] = no_pai->chaves[i];
     }
 
-    no_pai->chaves[posicao] = filho->chaves[num_chaves_mover];
+    no_pai->chaves[posicao] = filho->chaves[num_chaves_move];
     no_pai->num_chaves++;
 }
 
@@ -175,12 +175,11 @@ void arvB_balanceNo(ArvB no_pai, int posicao) {
     NoArvB* filho_direita = (direita < no_pai->num_chaves) ? no_pai->filho[direita] : NULL;
 
     if (filho_esquerda && filho_esquerda->num_chaves > min_chaves) { 
-        // Redistribuir chaves do filho à esquerda
-
+        // Redistribui chaves do filho à esquerda
         arvB_redistribuir_esquerda(no_pai, posicao);
 
-    } else if (filho_direita && filho_direita->num_chaves > min_chaves) { 
-       
+    } else if (filho_direita && filho_direita->num_chaves > min_chaves) {        
+        // Redistribui chaves do filho à direita
         arvB_redistribuir_direita(no_pai, posicao);
 
     } else if (filho_esquerda) {
@@ -259,7 +258,7 @@ void  arvB_remove(ArvB* raiz, int chave) {
     
     NoArvB* no_atual = *raiz;
     NoArvB* no_pai = NULL;
-    int posicao = 0; // Inicialize a posição com um valor padrão
+    int posicao = 0; 
 
     while (!no_atual->folha) {
         no_pai = no_atual;
@@ -282,7 +281,7 @@ void  arvB_remove(ArvB* raiz, int chave) {
             printf("Chave %d removida com sucesso!\n", chave);
             arvB_removeChave(no_atual, posicao);
         } else {
-            // Substitua o nó a ser removido pelo maior valor do nó à esquerda ou pelo menor valor do nó à direita.
+            // Substitui o nó a ser removido pelo maior valor do nó à esquerda ou pelo menor valor do nó à direita.
             NoArvB* pred = no_atual->filho[posicao];
             while (!pred->folha) {
                 pred = pred->filho[pred->num_chaves];
@@ -299,7 +298,6 @@ void  arvB_remove(ArvB* raiz, int chave) {
     // Balanceamento após a remoção
     arvB_balanceNo(no_pai, posicao);
 
-    // Se a raiz ficou vazia, atualize-a
     if (no_pai == NULL && (*raiz)->num_chaves == 0) {
         NoArvB* nova_raiz = (*raiz)->filho[0];
         free(*raiz);
@@ -325,7 +323,6 @@ void arvB_imprime_pais(NoArvB* no, int nivel, int posicao) {
     }
 }
 
-// Chamada inicial da função
 void arvB_imprime_pais_nivel(ArvB raiz) {
     arvB_imprime_pais(raiz, 0, 0);
 }
@@ -348,11 +345,9 @@ void arvB_imprime_folhas(NoArvB* no, int nivel, int posicao) {
     }
 }
 
-// Chamada inicial da função
 void arvB_imprime_folhas_nivel(ArvB raiz) {
     arvB_imprime_folhas(raiz, 0, 0);
 }
-
 
 int arvB_busca_chave(ArvB no, int chave) {
     if (no == NULL) {
@@ -399,8 +394,7 @@ int arvB_qtd_nos_recursivo(ArvB no) {
 int arvB_qtd_nos(ArvB raiz) {
     if (raiz == NULL) {
         return 0;
-    }
-    
+    }  
     return arvB_qtd_nos_recursivo(raiz);
 }
 
@@ -414,14 +408,12 @@ int arvB_qtd_chaves_recursivo(ArvB no) {
     for (int i = 0; i <= no->num_chaves; i++) {
         cont = cont + arvB_qtd_chaves_recursivo(no->filho[i]);            
     }
-
     return cont;
 }
 
 int arvB_qtd_chaves(ArvB raiz) {
     if (raiz == NULL) {
         return 0;
-    }
-    
+    }   
     return arvB_qtd_chaves_recursivo(raiz);
 }
