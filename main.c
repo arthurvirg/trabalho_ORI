@@ -4,20 +4,9 @@
 #include <stdbool.h>
 
 int main() {
-    
-    // int vetor[50];
-    // for(int i = 0; i < 50; i++)
-    // {
-    //     vetor[i] = rand() %100 ;
-    // }
 
     ArvB minha_arvore = arvB_cria();
-
-    //  for (int i = 0; i <= 49; i++)
-    // {
-    //     arvB_insere(&minha_arvore, vetor[i] );
-    // }
-    
+   
     arvB_insere(&minha_arvore, 0);
     arvB_insere(&minha_arvore, 1);
     arvB_insere(&minha_arvore, 2);
@@ -38,14 +27,10 @@ int main() {
 
     arvB_imprime_pais_nivel(minha_arvore);
     arvB_imprime_folhas_nivel(minha_arvore);
+    printf("\n");
 
-    bool result = arvB_busca(minha_arvore, 30);
-    if (result){
-        printf("Valor 30 encontrado!\n\n");
-    }
-    else{
-        printf("Valor 30 nao encontrado!\n\n");
-    }
+    arvB_busca(minha_arvore, 30);
+    
     
     int qtd_nos1 = arvB_qtd_nos(minha_arvore);
     printf("Qtd de nos: %d\n", qtd_nos1);
@@ -58,10 +43,7 @@ int main() {
 
     arvB_imprime_pais_nivel(minha_arvore);
     arvB_imprime_folhas_nivel(minha_arvore);
-
-    // arvB_imprime(minha_arvore);
-    // printf("\n");
-    // printf("\n");
+    printf("\n");
 
     int qtd_nos2 = arvB_qtd_nos(minha_arvore);
     printf("Qtd de nos: %d\n", qtd_nos2);

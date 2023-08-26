@@ -365,10 +365,12 @@ int arvB_busca_chave(ArvB no, int chave) {
     }
 
     if (posicao < no->num_chaves && chave == no->chaves[posicao]) {
+        printf("Valor %d encontrado!\n\n", chave);
         return 1;
     }
 
     if (no->folha) {
+        printf("Valor %d nao encontrado!\n\n", chave);
         return 0;
     }
 
